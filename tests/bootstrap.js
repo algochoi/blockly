@@ -78,6 +78,7 @@
       'Blockly.Lua.all',
       'Blockly.PHP.all',
       'Blockly.Python.all',
+      'Blockly.PyTeal.all',
     ],
 
     // List of scripts to load in compressed mode, instead of
@@ -115,7 +116,7 @@
   // Create a global variable to remember some state that will be
   // needed by later scripts.
   window.bootstrapInfo = {
-    /** boolean */ compressed: options.loadCompressed,
+    /** boolean */ compressed: false,
     /** ?Array<string> */ requires: null,
     /** ?Promise */ done: null,
   };

@@ -199,6 +199,12 @@ function toDart() {
   outputCode = code;
 }
 
+function toPyTeal() {
+  var code = pytealGenerator.workspaceToCode(demoWorkspace);
+  setOutput(code);
+  outputCode = code;
+}
+
 function changeIndex() {
   var oneBasedIndex = document.getElementById('indexing').checked;
   demoWorkspace.options.oneBasedIndex = oneBasedIndex;
