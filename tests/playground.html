@@ -129,18 +129,6 @@ function getToolboxElement() {
   return document.getElementById('toolbox-' + toolboxSuffix);
 }
 
-// function setToolboxDropdown() {
-//   var toolboxNames = [
-//       'toolbox-categories',
-//       'toolbox-categories-typed-variables',
-//       'toolbox-simple',
-//       'toolbox-test-blocks'
-//   ];
-//   var toolboxSuffix = getToolboxSuffix();
-//   document.forms.options.elements.toolbox.selectedIndex =
-//       toolboxNames.indexOf('toolbox-' + toolboxSuffix);
-// }
-
 function initToolbox(workspace) {
   var toolboxSuffix = getToolboxSuffix();
   if (toolboxSuffix == 'test-blocks' &&
@@ -356,8 +344,8 @@ start();
 
   <p>
     <input id="show" type="button" value="Show"></input> -
-    <input id="hide" type="button" value="Hide"></input> -
-    <a href="playgrounds/advanced_playground.html">Advanced</a>
+    <input id="hide" type="button" value="Hide"></input>
+    <!-- <a href="playgrounds/advanced_playground.html">Advanced</a> -->
   </p>
 
   <form id="options">
@@ -367,16 +355,13 @@ start();
     </select>
     <select name="toolbox" onchange="document.forms.options.submit()">
       <option value="categories">Categories</option>
-      <!-- <option value="categories-typed-variables">Categories (typed variables)</option>
-      <option value="simple">Simple</option>
-      <option value="test-blocks">Test Blocks</option> -->
     </select>
   </form>
   <p>
     <input id="save-json" type="button" value="Save JSON">
     <input id="save-xml" type="button" value="Save XML">
     <input type="button" value="Load" id="import">
-    <br>
+    <br> <br>
     <input id="to-code-js" type="button" value="To JavaScript">
     <input id="to-code-py" type="button" value="To Python">
     <input id="to-code-php" type="button" value="To PHP">
@@ -588,75 +573,11 @@ start();
           </shadow>
         </value>
       </block>
-      <!-- <block type="text_isEmpty">
-        <value name="VALUE">
-          <shadow type="text">
-            <field name="TEXT"></field>
-          </shadow>
-        </value>
-      </block> -->
-      <!-- <block type="text_indexOf">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">text</field>
-          </block>
-        </value>
-        <value name="FIND">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block> -->
-      <!-- <block type="text_charAt">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">text</field>
-          </block>
-        </value>
-      </block> -->
       <block type="text_getSubstring">
         <value name="STRING">
           <block type="variables_get">
             <field name="VAR">text</field>
           </block>
-        </value>
-      </block>
-      <block type="text_changeCase">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_trim">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="text_count">
-        <value name="SUB">
-          <shadow type="text"></shadow>
-        </value>
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block>
-      <block type="text_replace">
-        <value name="FROM">
-          <shadow type="text"></shadow>
-        </value>
-        <value name="TO">
-          <shadow type="text"></shadow>
-        </value>
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block>
-      <block type="text_reverse">
-        <value name="TEXT">
-          <shadow type="text"></shadow>
         </value>
       </block>
       <label text="Input/Output:" web-class="ioLabel"></label>
@@ -667,13 +588,13 @@ start();
           </shadow>
         </value>
       </block>
-      <block type="text_prompt_ext">
+      <!-- <block type="text_prompt_ext">
         <value name="TEXT">
           <shadow type="text">
             <field name="TEXT">abc</field>
           </shadow>
         </value>
-      </block>
+      </block> -->
     </category>
     <category name="Lists" categorystyle="list_category">
       <block type="lists_create_with">
@@ -726,44 +647,6 @@ start();
       </block>
       <block type="lists_sort"></block>
       <block type="lists_reverse"></block>
-    </category>
-    <category name="Colour" categorystyle="colour_category">
-      <block type="colour_picker"></block>
-      <block type="colour_random"></block>
-      <block type="colour_rgb">
-        <value name="RED">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-        <value name="GREEN">
-          <shadow type="math_number">
-            <field name="NUM">50</field>
-          </shadow>
-        </value>
-        <value name="BLUE">
-          <shadow type="math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="colour_blend">
-        <value name="COLOUR1">
-          <shadow type="colour_picker">
-            <field name="COLOUR">#ff0000</field>
-          </shadow>
-        </value>
-        <value name="COLOUR2">
-          <shadow type="colour_picker">
-            <field name="COLOUR">#3333ff</field>
-          </shadow>
-        </value>
-        <value name="RATIO">
-          <shadow type="math_number">
-            <field name="NUM">0.5</field>
-          </shadow>
-        </value>
-      </block>
     </category>
     <sep></sep>
     <category name="Variables" categorystyle="variable_category" custom="VARIABLE"></category>

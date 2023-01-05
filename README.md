@@ -22,6 +22,10 @@ npm run start
 
 The blockly playground should automatically open in your browser. If not, you can go to `localhost:8080/tests/playground.html` to access the playground. The advanced playground is not supported for PyTeal yet. 
 
+### Motivation
+
+From a pragmatic perspective, this exercise gives us a better idea of how to bridge smart-contract languages with other popular programming languages in a syntax-agnostic, visual setting. It's interesting to consider how code generation could be improved and look for common patterns in syntax. Also, blocks are fun to build with!
+
 ### Development Notes
 
 This is still at an experimental stage. There have been custom modifications made in `tests/playground.html` to support Algorand smart-contract related blocks and a generator in `generators/pyteal.js` to generate smart-contract code.

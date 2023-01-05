@@ -309,25 +309,6 @@ PyTeal.getAdjustedInt = function(block, atId, opt_delta, opt_negate) {
   const atOrder = delta ? this.ORDER_ADDITIVE : this.ORDER_NONE;
   let at = this.valueToCode(block, atId, atOrder) || defaultAtIndex;
 
-  if (stringUtils.isNumber(at)) {
-    // If the index is a naked number, adjust it right now.
-    at = parseInt(at, 10) + delta;
-    if (opt_negate) {
-      at = -at;
-    }
-  } else {
-    // If the index is dynamic, adjust it in code.
-    if (delta > 0) {
-      at = 'int(' + at + ' + ' + delta + ')';
-    } else if (delta < 0) {
-      at = 'int(' + at + ' - ' + -delta + ')';
-    } else {
-      at = 'int(' + at + ')';
-    }
-    if (opt_negate) {
-      at = '-' + at;
-    }
-  }
   return at;
 };
 

@@ -63,6 +63,7 @@ PyTeal['text_join'] = function(block) {
       return [code, PyTeal.ORDER_ADDITIVE];
     }
     // TODO: Support multiple Concats
+
     // default: {
     //   const elements = [];
     //   for (let i = 0; i < block.itemCount_; i++) {
@@ -83,61 +84,6 @@ PyTeal['text_length'] = function(block) {
   return ['Len(' + text + ')', PyTeal.ORDER_FUNCTION_CALL];
 };
 
-PyTeal['text_indexOf'] = function(block) {
-  // Search the text for a substring.
-  // Should we allow for non-case sensitive???
-  const operator = block.getFieldValue('END') === 'FIRST' ? 'find' : 'rfind';
-  const substring =
-      PyTeal.valueToCode(block, 'FIND', PyTeal.ORDER_NONE) || "''";
-  const text =
-      PyTeal.valueToCode(block, 'VALUE', PyTeal.ORDER_MEMBER) || "''";
-  const code = text + '.' + operator + '(' + substring + ')';
-  if (block.workspace.options.oneBasedIndex) {
-    return [code + ' + 1', PyTeal.ORDER_ADDITIVE];
-  }
-  return [code, PyTeal.ORDER_FUNCTION_CALL];
-};
-
-PyTeal['text_charAt'] = function(block) {
-  // Get letter at index.
-  // Note: Until January 2013 this block did not have the WHERE input.
-  const where = block.getFieldValue('WHERE') || 'FROM_START';
-  const textOrder =
-      (where === 'RANDOM') ? PyTeal.ORDER_NONE : PyTeal.ORDER_MEMBER;
-  const text = PyTeal.valueToCode(block, 'VALUE', textOrder) || "''";
-  switch (where) {
-    case 'FIRST': {
-      const code = text + '[0]';
-      return [code, PyTeal.ORDER_MEMBER];
-    }
-    case 'LAST': {
-      const code = text + '[-1]';
-      return [code, PyTeal.ORDER_MEMBER];
-    }
-    case 'FROM_START': {
-      const at = PyTeal.getAdjustedInt(block, 'AT');
-      const code = text + '[' + at + ']';
-      return [code, PyTeal.ORDER_MEMBER];
-    }
-    case 'FROM_END': {
-      const at = PyTeal.getAdjustedInt(block, 'AT', 1, true);
-      const code = text + '[' + at + ']';
-      return [code, PyTeal.ORDER_MEMBER];
-    }
-    case 'RANDOM': {
-      PyTeal.definitions_['import_random'] = 'import random';
-      const functionName = PyTeal.provideFunction_('text_random_letter', `
-def ${PyTeal.FUNCTION_NAME_PLACEHOLDER_}(text):
-  x = int(random.random() * len(text))
-  return text[x]
-`);
-      const code = functionName + '(' + text + ')';
-      return [code, PyTeal.ORDER_FUNCTION_CALL];
-    }
-  }
-  throw Error('Unhandled option (text_charAt).');
-};
-
 PyTeal['text_getSubstring'] = function(block) {
   // Get substring.
   const where1 = block.getFieldValue('WHERE1');
@@ -148,16 +94,10 @@ PyTeal['text_getSubstring'] = function(block) {
   switch (where1) {
     case 'FROM_START':
       at1 = PyTeal.getAdjustedInt(block, 'AT1');
-      if (at1 === 0) {
-        at1 = '';
-      }
       break;
     case 'FROM_END':
-      at1 = PyTeal.getAdjustedInt(block, 'AT1', 1, true);
-      break;
     case 'FIRST':
-      at1 = '';
-      break;
+      throw Error('Unsupported in PyTeal: (text_getSubstring)');
     default:
       throw Error('Unhandled option (text_getSubstring)');
   }
@@ -165,59 +105,22 @@ PyTeal['text_getSubstring'] = function(block) {
   let at2;
   switch (where2) {
     case 'FROM_START':
-      at2 = PyTeal.getAdjustedInt(block, 'AT2', 1);
+      at2 = PyTeal.getAdjustedInt(block, 'AT2');
       break;
     case 'FROM_END':
-      at2 = PyTeal.getAdjustedInt(block, 'AT2', 0, true);
-      // Ensure that if the result calculated is 0 that sub-sequence will
-      // include all elements as expected.
-      if (!stringUtils.isNumber(String(at2))) {
-        PyTeal.definitions_['import_sys'] = 'import sys';
-        at2 += ' or sys.maxsize';
-      } else if (at2 === 0) {
-        at2 = '';
-      }
-      break;
-    case 'LAST':
-      at2 = '';
-      break;
+    case 'FIRST':
+      throw Error('Unsupported in PyTeal: (text_getSubstring)');
     default:
       throw Error('Unhandled option (text_getSubstring)');
   }
-  const code = text + '[' + at1 + ' : ' + at2 + ']';
+  const code = 'Substring(' + text + ', ' + at1 + ', ' + at2 + ')';
   return [code, PyTeal.ORDER_MEMBER];
-};
-
-PyTeal['text_changeCase'] = function(block) {
-  // Change capitalization.
-  const OPERATORS = {
-    'UPPERCASE': '.upper()',
-    'LOWERCASE': '.lower()',
-    'TITLECASE': '.title()'
-  };
-  const operator = OPERATORS[block.getFieldValue('CASE')];
-  const text = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_MEMBER) || "''";
-  const code = text + operator;
-  return [code, PyTeal.ORDER_FUNCTION_CALL];
-};
-
-PyTeal['text_trim'] = function(block) {
-  // Trim spaces.
-  const OPERATORS = {
-    'LEFT': '.lstrip()',
-    'RIGHT': '.rstrip()',
-    'BOTH': '.strip()'
-  };
-  const operator = OPERATORS[block.getFieldValue('MODE')];
-  const text = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_MEMBER) || "''";
-  const code = text + operator;
-  return [code, PyTeal.ORDER_FUNCTION_CALL];
 };
 
 PyTeal['text_print'] = function(block) {
   // Print statement.
   const msg = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_NONE) || "''";
-  return 'print(' + msg + ')\n';
+  return 'Log(' + msg + ')\n';
 };
 
 PyTeal['text_prompt_ext'] = function(block) {
@@ -246,24 +149,3 @@ def ${PyTeal.FUNCTION_NAME_PLACEHOLDER_}(msg):
 };
 
 PyTeal['text_prompt'] = PyTeal['text_prompt_ext'];
-
-PyTeal['text_count'] = function(block) {
-  const text = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_MEMBER) || "''";
-  const sub = PyTeal.valueToCode(block, 'SUB', PyTeal.ORDER_NONE) || "''";
-  const code = text + '.count(' + sub + ')';
-  return [code, PyTeal.ORDER_FUNCTION_CALL];
-};
-
-PyTeal['text_replace'] = function(block) {
-  const text = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_MEMBER) || "''";
-  const from = PyTeal.valueToCode(block, 'FROM', PyTeal.ORDER_NONE) || "''";
-  const to = PyTeal.valueToCode(block, 'TO', PyTeal.ORDER_NONE) || "''";
-  const code = text + '.replace(' + from + ', ' + to + ')';
-  return [code, PyTeal.ORDER_MEMBER];
-};
-
-PyTeal['text_reverse'] = function(block) {
-  const text = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_MEMBER) || "''";
-  const code = text + '[::-1]';
-  return [code, PyTeal.ORDER_MEMBER];
-};
