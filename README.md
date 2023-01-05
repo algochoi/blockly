@@ -1,6 +1,6 @@
-# Blockly for PyTeal+
+# Blockly for Algorand+
 
-This is a modified fork of Google's Blockly tool. This repo contains some modifications to support Algorand-related language generators and demos in the playground (tests/playground.htmk)
+This is a modified fork of Google's Blockly tool. This repo contains some modifications to support Algorand-related language generators and demos in the playground (`tests/playground.html`)
 
 
 ### Installing Blockly
