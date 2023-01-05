@@ -24,7 +24,9 @@ The blockly playground should automatically open in your browser. If not, you ca
 
 ### Motivation
 
-From a pragmatic perspective, this exercise gives us a better idea of how to bridge smart-contract languages with other popular programming languages in a syntax-agnostic, visual setting. It's interesting to consider how code generation could be improved and look for common patterns in syntax. Also, blocks are fun to build with!
+From a pragmatic perspective, this exercise gives us a better idea of how to bridge and compare smart-contract languages with other popular programming languages in a syntax-agnostic, visual setting. It's interesting to consider how code generation could be improved and look for common patterns in syntax. Also, blocks are fun to build with!
+
+Well-formed blocks will (theoretically) always return valid (syntactically correct) PyTeal. Future work can be extended to linters/static-analyzers that could help enforce certain rules within PyTeal.
 
 ### Development Notes
 

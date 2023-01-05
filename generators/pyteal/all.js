@@ -14,7 +14,6 @@
 goog.module('Blockly.PyTeal.all');
 
 const moduleExports = goog.require('Blockly.PyTeal');
-goog.require('Blockly.PyTeal.colour');
 goog.require('Blockly.PyTeal.lists');
 goog.require('Blockly.PyTeal.logic');
 goog.require('Blockly.PyTeal.loops');
