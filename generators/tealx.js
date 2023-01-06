@@ -158,7 +158,7 @@ Tealx.init = function(workspace) {
 Tealx.finish = function(code) {
   // Import Tealx
   // Convert the definitions dictionary into a list.
-  const imports = ['<version value="8"></version>\n'];
+  const imports = ['<program version="8"></program>\n'];
   const definitions = [];
   for (let name in this.definitions_) {
     const def = this.definitions_[name];
