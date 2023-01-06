@@ -2,14 +2,7 @@
 
 This is a modified fork of Google's Blockly tool. This repo contains some modifications to support Algorand-related language generators and demos in the playground (`tests/playground.html`)
 
-
-### Installing Blockly
-
-Blockly is [available on npm](https://www.npmjs.com/package/blockly).
-
-```bash
-npm install blockly
-```
+**NOTE:** This fork currently uses v9.0.0 due to some uninvestigated issues on the blockly playground in the recent versions.
 
 For more information on installing and using Blockly, see the [Getting Started article](https://developers.google.com/blockly/guides/get-started/web).
 
@@ -33,7 +26,7 @@ Well-formed blocks will (theoretically) always return valid (syntactically corre
 This is still at an experimental stage. There have been custom modifications made in `tests/playground.html` to support Algorand smart-contract related blocks and a generator in `generators/pyteal.js` to generate smart-contract code.
 
 To add another language, 
-* Add high-level language rules in `generators`
+* Add high-level grammar rules in `generators`. The top-level `.js` file serves as the lexer and determines things like operator precedence.
 * Add a subdirectory in `generators` with your language. `all.js` will be the entry point and will organize your subfiles.
 * Add a button that links to the generator in `tests/playground.html`.
 * Add the generator in `tests/bootstrap.js` and `tests/bootstrap_helper.js` where the other languages are. Make sure you run `npm install .` so it generates some pre-compiled code in `build/` (local directory).

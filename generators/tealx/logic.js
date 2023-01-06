@@ -11,45 +11,48 @@
 
 goog.module('Blockly.Tealx.logic');
 
-const {TealxGenerator: Tealx} = goog.require('Blockly.Tealx');
+const {tealxGenerator: Tealx} = goog.require('Blockly.Tealx');
 
 
-// Tealx['controls_if'] = function(block) {
-//   // If/elseif/else condition.
-//   let n = 0;
-//   let code = '', branchCode, conditionCode;
-//   if (Tealx.STATEMENT_PREFIX) {
-//     // Automatic prefix insertion is switched off for this block.  Add manually.
-//     code += Tealx.injectId(Tealx.STATEMENT_PREFIX, block);
-//   }
-//   do {
-//     conditionCode =
-//         Tealx.valueToCode(block, 'IF' + n, Tealx.ORDER_NONE) || 'Int(0)';
-//     branchCode = Tealx.statementToCode(block, 'DO' + n) || Tealx.INDENT + 'Reject()';
-//     if (Tealx.STATEMENT_SUFFIX) {
-//       branchCode =
-//           Tealx.prefixLines(
-//               Tealx.injectId(Tealx.STATEMENT_SUFFIX, block)) +
-//           branchCode;
-//     }
-//     code += (n === 0 ? 'If(' : 'ElseIf(') + conditionCode + ').Then(\n' + branchCode + '\n)\n';
-//     n++;
-//   } while (block.getInput('IF' + n));
+Tealx['controls_if'] = function(block) {
+  // If/elseif/else condition.
+  let n = 0;
+  let code = '', branchCode, conditionCode;
+  if (Tealx.STATEMENT_PREFIX) {
+    // Automatic prefix insertion is switched off for this block.  Add manually.
+    code += Tealx.injectId(Tealx.STATEMENT_PREFIX, block);
+  }
+  do {
+    conditionCode =
+        Tealx.valueToCode(block, 'IF' + n, Tealx.ORDER_NONE) || '<int value="0"></int>';
+    branchCode = Tealx.statementToCode(block, 'DO' + n) || Tealx.INDENT + '<int value="0"></int>';
+    if (Tealx.STATEMENT_SUFFIX) {
+      branchCode =
+          Tealx.prefixLines(
+              Tealx.injectId(Tealx.STATEMENT_SUFFIX, block)) +
+          branchCode;
+    }
+    // If code
+    code += (n === 0 ? '<if>' : '<elseif>') + ' <condition> ' + conditionCode + ' </condition>\n'
+    // Then code
+    code += '<then>\n' + Tealx.INDENT + branchCode + '\n</then>\n';
+    n++;
+  } while (block.getInput('IF' + n));
 
-//   if (block.getInput('ELSE') || Tealx.STATEMENT_SUFFIX) {
-//     branchCode = Tealx.statementToCode(block, 'ELSE') || 'Reject()';
-//     if (Tealx.STATEMENT_SUFFIX) {
-//       branchCode =
-//           Tealx.prefixLines(
-//               Tealx.injectId(Tealx.STATEMENT_SUFFIX, block)) +
-//           branchCode;
-//     }
-//     code += '.Else(\n' + branchCode + ')\n';
-//   }
-//   return code;
-// };
+  if (block.getInput('ELSE') || Tealx.STATEMENT_SUFFIX) {
+    branchCode = Tealx.statementToCode(block, 'ELSE') || '<int value="0"></int>';
+    if (Tealx.STATEMENT_SUFFIX) {
+      branchCode =
+          Tealx.prefixLines(
+              Tealx.injectId(Tealx.STATEMENT_SUFFIX, block)) +
+          branchCode;
+    }
+    code += '<else>\n' + Tealx.INDENT + branchCode + '\n</else>\n';
+  }
+  return code + '</if>';
+};
 
-// Tealx['controls_ifelse'] = Tealx['controls_if'];
+Tealx['controls_ifelse'] = Tealx['controls_if'];
 
 // Tealx['logic_compare'] = function(block) {
 //   // Comparison operator.

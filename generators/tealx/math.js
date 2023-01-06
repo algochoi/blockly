@@ -5,60 +5,61 @@
  */
 
 /**
- * @fileoverview Generating PyTeal for math blocks.
+ * @fileoverview Generating Tealx for math blocks.
  */
 'use strict';
 
-goog.module('Blockly.PyTeal.math');
+goog.module('Blockly.Tealx.math');
 
 const {NameType} = goog.require('Blockly.Names');
-const {pytealGenerator: PyTeal} = goog.require('Blockly.PyTeal');
+const {tealxGenerator: Tealx} = goog.require('Blockly.Tealx');
 
 
 // If any new block imports any library, add that library name here.
-PyTeal.addReservedWords('math,random,Number');
+Tealx.addReservedWords('math,random,Number');
 
-PyTeal['math_number'] = function(block) {
+Tealx['math_number'] = function(block) {
   // Numeric value.
-  let code = 'Int(' + Number(block.getFieldValue('NUM')) + ')';
-  const order = code < 0 ? PyTeal.ORDER_UNARY_SIGN : PyTeal.ORDER_ATOMIC;
+  let code = '<int value="' + Number(block.getFieldValue('NUM')) + '"></int>';
+  const order = code < 0 ? Tealx.ORDER_UNARY_SIGN : Tealx.ORDER_ATOMIC;
   
   return [code, order];
 };
 
-PyTeal['math_arithmetic'] = function(block) {
+Tealx['math_arithmetic'] = function(block) {
   // Basic arithmetic operators, and power.
   const OPERATORS = {
-    'ADD': ['Add', PyTeal.ORDER_ADDITIVE],
-    'MINUS': ['Minus', PyTeal.ORDER_ADDITIVE],
-    'MULTIPLY': ['Mul', PyTeal.ORDER_MULTIPLICATIVE],
-    'DIVIDE': ['Div', PyTeal.ORDER_MULTIPLICATIVE],
-    'POWER': ['Exp', PyTeal.ORDER_EXPONENTIATION],
+    'ADD': ['<add>', PyTeal.ORDER_ADDITIVE, '</add>'],
+    'MINUS': ['<minus>', PyTeal.ORDER_ADDITIVE, '</minus>'],
+    'MULTIPLY': ['<mul>', PyTeal.ORDER_MULTIPLICATIVE, '</mul>'],
+    'DIVIDE': ['<divide>', PyTeal.ORDER_MULTIPLICATIVE, '</divide>'],
+    'POWER': ['<exp>', PyTeal.ORDER_EXPONENTIATION, '</exp>'],
   };
   const tuple = OPERATORS[block.getFieldValue('OP')];
   const operator = tuple[0];
   const order = tuple[1];
-  const argument0 = PyTeal.valueToCode(block, 'A', order) || 'Int(0)';
-  const argument1 = PyTeal.valueToCode(block, 'B', order) || 'Int(0)';
-  const code = operator + '(' + argument0+ ', ' + argument1 + ')';
+  const closingOp = tuple[2];
+  const argument0 = Tealx.valueToCode(block, 'A', order) || '<int value="0"></int>';
+  const argument1 = Tealx.valueToCode(block, 'B', order) || '<int value="0"></int>';
+  const code = operator + argument0 + ' ' + argument1 + closingOp;
   return [code, order];
 };
 
-// PyTeal['math_single'] = function(block) {
+// Tealx['math_single'] = function(block) {
 //   // Math operators with single operand.
 //   const operator = block.getFieldValue('OP');
 //   let code;
 //   let arg;
 //   if (operator === 'NEG') {
 //     // Negation is a special case given its different operator precedence.
-//     code = PyTeal.valueToCode(block, 'NUM', PyTeal.ORDER_UNARY_SIGN) || '0';
-//     return ['-' + code, PyTeal.ORDER_UNARY_SIGN];
+//     code = Tealx.valueToCode(block, 'NUM', Tealx.ORDER_UNARY_SIGN) || '0';
+//     return ['-' + code, Tealx.ORDER_UNARY_SIGN];
 //   }
-//   PyTeal.definitions_['import_math'] = 'import math';
+//   Tealx.definitions_['import_math'] = 'import math';
 //   if (operator === 'SIN' || operator === 'COS' || operator === 'TAN') {
-//     arg = PyTeal.valueToCode(block, 'NUM', PyTeal.ORDER_MULTIPLICATIVE) || '0';
+//     arg = Tealx.valueToCode(block, 'NUM', Tealx.ORDER_MULTIPLICATIVE) || '0';
 //   } else {
-//     arg = PyTeal.valueToCode(block, 'NUM', PyTeal.ORDER_NONE) || '0';
+//     arg = Tealx.valueToCode(block, 'NUM', Tealx.ORDER_NONE) || '0';
 //   }
 //   // First, handle cases which generate values that don't need parentheses
 //   // wrapping the code.
@@ -101,7 +102,7 @@ PyTeal['math_arithmetic'] = function(block) {
 //       break;
 //   }
 //   if (code) {
-//     return [code, PyTeal.ORDER_FUNCTION_CALL];
+//     return [code, Tealx.ORDER_FUNCTION_CALL];
 //   }
 //   // Second, handle cases which generate values that may need parentheses
 //   // wrapping the code.
@@ -118,15 +119,15 @@ PyTeal['math_arithmetic'] = function(block) {
 //     default:
 //       throw Error('Unknown math operator: ' + operator);
 //   }
-//   return [code, PyTeal.ORDER_MULTIPLICATIVE];
+//   return [code, Tealx.ORDER_MULTIPLICATIVE];
 // };
 
-PyTeal['math_modulo'] = function(block) {
-  // Remainder computation.
-  const argument0 =
-      PyTeal.valueToCode(block, 'DIVIDEND', PyTeal.ORDER_MULTIPLICATIVE) || 'Int(0)';
-  const argument1 =
-      PyTeal.valueToCode(block, 'DIVISOR', PyTeal.ORDER_MULTIPLICATIVE) || 'Int(0)';
-  const code = 'Mod(' + argument0 + ', ' + argument1 + ')';
-  return [code, PyTeal.ORDER_MULTIPLICATIVE];
-};
+// Tealx['math_modulo'] = function(block) {
+//   // Remainder computation.
+//   const argument0 =
+//       Tealx.valueToCode(block, 'DIVIDEND', Tealx.ORDER_MULTIPLICATIVE) || '0';
+//   const argument1 =
+//       Tealx.valueToCode(block, 'DIVISOR', Tealx.ORDER_MULTIPLICATIVE) || '0';
+//   const code = 'Mod(' + argument0 + ', ' + argument1 + ')';
+//   return [code, Tealx.ORDER_MULTIPLICATIVE];
+// };

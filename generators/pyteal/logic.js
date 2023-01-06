@@ -37,14 +37,14 @@ PyTeal['controls_if'] = function(block) {
   } while (block.getInput('IF' + n));
 
   if (block.getInput('ELSE') || PyTeal.STATEMENT_SUFFIX) {
-    branchCode = PyTeal.pytealStatementToCode(block, 'ELSE') || 'Reject()';
+    branchCode = PyTeal.pytealStatementToCode(block, 'ELSE') || PyTeal.INDENT + 'Reject()';
     if (PyTeal.STATEMENT_SUFFIX) {
       branchCode =
           PyTeal.prefixLines(
               PyTeal.injectId(PyTeal.STATEMENT_SUFFIX, block)) +
           branchCode;
     }
-    code += '.Else(\n' + branchCode + ')\n';
+    code += '.Else(\n' + branchCode + '\n)\n';
   }
   return code;
 };
