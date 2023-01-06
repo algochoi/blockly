@@ -39,8 +39,8 @@ Tealx['math_arithmetic'] = function(block) {
   const operator = tuple[0];
   const order = tuple[1];
   const closingOp = tuple[2];
-  const argument0 = Tealx.valueToCode(block, 'A', order) || '<int value="0"></int>';
-  const argument1 = Tealx.valueToCode(block, 'B', order) || '<int value="0"></int>';
+  const argument0 = Tealx.valueToCode(block, 'A', order) || Tealx.FALSE_VALUE;
+  const argument1 = Tealx.valueToCode(block, 'B', order) || Tealx.FALSE_VALUE;
   const code = operator + argument0 + ' ' + argument1 + closingOp;
   return [code, order];
 };

@@ -28,6 +28,13 @@ const {Workspace} = goog.requireType('Blockly.Workspace');
 const Tealx = new Generator('Tealx');
 
 /**
+ * Constants
+ * Since TEAL treats true values as int 1 and false values as int 0, alias them:
+ */
+Tealx.TRUE_VALUE = '<int value="1"></int>';
+Tealx.FALSE_VALUE = '<int value="0"></int>';
+
+/**
  * List of illegal variable names.
  * This is not intended to be a security feature.  Blockly is 100% client-side,
  * so bypassing this list is trivial.  This is intended to prevent users from
@@ -125,16 +132,18 @@ Tealx.init = function(workspace) {
   const devVarList = Variables.allDeveloperVariables(workspace);
   for (let i = 0; i < devVarList.length; i++) {
     defvars.push(
+        '<variable name="' +
         this.nameDB_.getName(devVarList[i], Names.DEVELOPER_VARIABLE_TYPE) +
-        ' = ScratchVar(TealType.uint64)');
+        '" type="uint64"></variable>');
   }
 
   // Add user variables, but only ones that are being used.
   const variables = Variables.allUsedVarModels(workspace);
   for (let i = 0; i < variables.length; i++) {
     defvars.push(
+        '<variable name="' +
         this.nameDB_.getName(variables[i].getId(), NameType.VARIABLE) +
-        ' = ScratchVar(TealType.uint64)');
+        '" type="uint64"></variable>');
   }
 
   this.definitions_['variables'] = defvars.join('\n');

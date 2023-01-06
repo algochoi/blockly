@@ -148,6 +148,7 @@ def ${PyTeal.FUNCTION_NAME_PLACEHOLDER_}(msg):
   return [code, PyTeal.ORDER_FUNCTION_CALL];
 };
 
+// Override to Btoi opcode
 PyTeal['text_isEmpty'] = function(block) {
   // Is the string null or array empty?
   const text = PyTeal.valueToCode(block, 'VALUE', PyTeal.ORDER_NONE) || 'Bytes("")';

@@ -19,7 +19,7 @@ goog.require('Blockly.Tealx.logic');
 goog.require('Blockly.Tealx.math');
 // goog.require('Blockly.Tealx.procedures');
 goog.require('Blockly.Tealx.texts');
-// goog.require('Blockly.Tealx.variables');
+goog.require('Blockly.Tealx.variables');
 // goog.require('Blockly.Tealx.variablesDynamic');
 
 exports = moduleExports;
