@@ -34,6 +34,8 @@ for (const require of window.bootstrapInfo.requires) {
     'Blockly.Python.all': 'pythonGenerator',
     'Blockly.PyTeal': 'pytealGenerator',
     'Blockly.PyTeal.all': 'pytealGenerator',
+    'Blockly.Tealx': 'tealxGenerator',
+    'Blockly.Tealx.all': 'tealxGenerator',
   }[require];
   if (exportName) {
     window[exportName] = goog.module.get(require)[exportName];

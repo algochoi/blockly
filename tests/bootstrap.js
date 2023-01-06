@@ -79,6 +79,7 @@
       'Blockly.PHP.all',
       'Blockly.Python.all',
       'Blockly.PyTeal.all',
+      'Blockly.Tealx.all',
     ],
 
     // List of scripts to load in compressed mode, instead of

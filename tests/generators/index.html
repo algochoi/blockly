@@ -205,6 +205,12 @@ function toPyTeal() {
   outputCode = code;
 }
 
+function toTealx() {
+  var code = tealxGenerator.workspaceToCode(demoWorkspace);
+  setOutput(code);
+  outputCode = code;
+}
+
 function changeIndex() {
   var oneBasedIndex = document.getElementById('indexing').checked;
   demoWorkspace.options.oneBasedIndex = oneBasedIndex;

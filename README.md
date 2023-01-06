@@ -32,6 +32,12 @@ Well-formed blocks will (theoretically) always return valid (syntactically corre
 
 This is still at an experimental stage. There have been custom modifications made in `tests/playground.html` to support Algorand smart-contract related blocks and a generator in `generators/pyteal.js` to generate smart-contract code.
 
+To add another language, 
+* Add high-level language rules in `generators`
+* Add a subdirectory in `generators` with your language. `all.js` will be the entry point and will organize your subfiles.
+* Add a button that links to the generator in `tests/playground.html`.
+* Add the generator in `tests/bootstrap.js` and `tests/bootstrap_helper.js` where the other languages are. Make sure you run `npm install .` so it generates some pre-compiled code in `build/` (local directory).
+
 ### Contributions
 
 Contributions are welcome! Make sure to run `npm run lint` as a sanity check to see if your contribution is properly formatted.

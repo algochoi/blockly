@@ -5,12 +5,12 @@
  */
 
 /**
- * @fileoverview Helper functions for generating Pyteal for blocks.
+ * @fileoverview Helper functions for generating Tealx for blocks.
  * @suppress {checkTypes|globalThis}
  */
 'use strict';
 
-goog.module('Blockly.PyTeal');
+goog.module('Blockly.Tealx');
 
 const stringUtils = goog.require('Blockly.utils.string');
 const Variables = goog.require('Blockly.Variables');
@@ -22,10 +22,10 @@ const {Workspace} = goog.requireType('Blockly.Workspace');
 
 
 /**
- * PyTeal code generator.
+ * Tealx code generator.
  * @type {!Generator}
  */
-const PyTeal = new Generator('PyTeal');
+const Tealx = new Generator('Tealx');
 
 /**
  * List of illegal variable names.
@@ -33,113 +33,75 @@ const PyTeal = new Generator('PyTeal');
  * so bypassing this list is trivial.  This is intended to prevent users from
  * accidentally clobbering a built-in object or function.
  */
-PyTeal.addReservedWords(
-    // import keyword
-    // print(','.join(sorted(keyword.kwlist)))
-    // https://docs.python.org/3/reference/lexical_analysis.html#keywords
-    // https://docs.python.org/2/reference/lexical_analysis.html#keywords
-    'False,None,True,and,as,assert,break,class,continue,def,del,elif,else,' +
-    'except,exec,finally,for,from,global,if,import,in,is,lambda,nonlocal,not,' +
-    'or,pass,print,raise,return,try,while,with,yield,' +
-    // https://docs.python.org/3/library/constants.html
-    // https://docs.python.org/2/library/constants.html
-    'NotImplemented,Ellipsis,__debug__,quit,exit,copyright,license,credits,' +
-    // >>> print(','.join(sorted(dir(__builtins__))))
-    // https://docs.python.org/3/library/functions.html
-    // https://docs.python.org/2/library/functions.html
-    'ArithmeticError,AssertionError,AttributeError,BaseException,' +
-    'BlockingIOError,BrokenPipeError,BufferError,BytesWarning,' +
-    'ChildProcessError,ConnectionAbortedError,ConnectionError,' +
-    'ConnectionRefusedError,ConnectionResetError,DeprecationWarning,EOFError,' +
-    'Ellipsis,EnvironmentError,Exception,FileExistsError,FileNotFoundError,' +
-    'FloatingPointError,FutureWarning,GeneratorExit,IOError,ImportError,' +
-    'ImportWarning,IndentationError,IndexError,InterruptedError,' +
-    'IsADirectoryError,KeyError,KeyboardInterrupt,LookupError,MemoryError,' +
-    'ModuleNotFoundError,NameError,NotADirectoryError,NotImplemented,' +
-    'NotImplementedError,OSError,OverflowError,PendingDeprecationWarning,' +
-    'PermissionError,ProcessLookupError,RecursionError,ReferenceError,' +
-    'ResourceWarning,RuntimeError,RuntimeWarning,StandardError,' +
-    'StopAsyncIteration,StopIteration,SyntaxError,SyntaxWarning,SystemError,' +
-    'SystemExit,TabError,TimeoutError,TypeError,UnboundLocalError,' +
-    'UnicodeDecodeError,UnicodeEncodeError,UnicodeError,' +
-    'UnicodeTranslateError,UnicodeWarning,UserWarning,ValueError,Warning,' +
-    'ZeroDivisionError,_,__build_class__,__debug__,__doc__,__import__,' +
-    '__loader__,__name__,__package__,__spec__,abs,all,any,apply,ascii,' +
-    'basestring,bin,bool,buffer,bytearray,bytes,callable,chr,classmethod,cmp,' +
-    'coerce,compile,complex,copyright,credits,delattr,dict,dir,divmod,' +
-    'enumerate,eval,exec,execfile,exit,file,filter,float,format,frozenset,' +
-    'getattr,globals,hasattr,hash,help,hex,id,input,int,intern,isinstance,' +
-    'issubclass,iter,len,license,list,locals,long,map,max,memoryview,min,' +
-    'next,object,oct,open,ord,pow,print,property,quit,range,raw_input,reduce,' +
-    'reload,repr,reversed,round,set,setattr,slice,sorted,staticmethod,str,' +
-    'sum,super,tuple,type,unichr,unicode,vars,xrange,zip');
+Tealx.addReservedWords(
+    'NULL');
 
 /**
  * Order of operation ENUMs.
  * http://docs.python.org/reference/expressions.html#summary
  */
-PyTeal.ORDER_ATOMIC = 0;             // 0 "" ...
-PyTeal.ORDER_COLLECTION = 1;         // tuples, lists, dictionaries
-PyTeal.ORDER_STRING_CONVERSION = 1;  // `expression...`
-PyTeal.ORDER_MEMBER = 2.1;           // . []
-PyTeal.ORDER_FUNCTION_CALL = 2.2;    // ()
-PyTeal.ORDER_EXPONENTIATION = 3;     // **
-PyTeal.ORDER_UNARY_SIGN = 4;         // + -
-PyTeal.ORDER_BITWISE_NOT = 4;        // ~
-PyTeal.ORDER_MULTIPLICATIVE = 5;     // * / // %
-PyTeal.ORDER_ADDITIVE = 6;           // + -
-PyTeal.ORDER_BITWISE_SHIFT = 7;      // << >>
-PyTeal.ORDER_BITWISE_AND = 8;        // &
-PyTeal.ORDER_BITWISE_XOR = 9;        // ^
-PyTeal.ORDER_BITWISE_OR = 10;        // |
-PyTeal.ORDER_RELATIONAL = 11;        // in, not in, is, is not,
+Tealx.ORDER_ATOMIC = 0;             // 0 "" ...
+Tealx.ORDER_COLLECTION = 1;         // tuples, lists, dictionaries
+Tealx.ORDER_STRING_CONVERSION = 1;  // `expression...`
+Tealx.ORDER_MEMBER = 2.1;           // . []
+Tealx.ORDER_FUNCTION_CALL = 2.2;    // ()
+Tealx.ORDER_EXPONENTIATION = 3;     // **
+Tealx.ORDER_UNARY_SIGN = 4;         // + -
+Tealx.ORDER_BITWISE_NOT = 4;        // ~
+Tealx.ORDER_MULTIPLICATIVE = 5;     // * / // %
+Tealx.ORDER_ADDITIVE = 6;           // + -
+Tealx.ORDER_BITWISE_SHIFT = 7;      // << >>
+Tealx.ORDER_BITWISE_AND = 8;        // &
+Tealx.ORDER_BITWISE_XOR = 9;        // ^
+Tealx.ORDER_BITWISE_OR = 10;        // |
+Tealx.ORDER_RELATIONAL = 11;        // in, not in, is, is not,
                                      //     <, <=, >, >=, <>, !=, ==
-PyTeal.ORDER_LOGICAL_NOT = 12;       // not
-PyTeal.ORDER_LOGICAL_AND = 13;       // and
-PyTeal.ORDER_LOGICAL_OR = 14;        // or
-PyTeal.ORDER_CONDITIONAL = 15;       // if else
-PyTeal.ORDER_LAMBDA = 16;            // lambda
-PyTeal.ORDER_NONE = 99;              // (...)
+Tealx.ORDER_LOGICAL_NOT = 12;       // not
+Tealx.ORDER_LOGICAL_AND = 13;       // and
+Tealx.ORDER_LOGICAL_OR = 14;        // or
+Tealx.ORDER_CONDITIONAL = 15;       // if else
+Tealx.ORDER_LAMBDA = 16;            // lambda
+Tealx.ORDER_NONE = 99;              // (...)
 
 /**
  * List of outer-inner pairings that do NOT require parentheses.
  * @type {!Array<!Array<number>>}
  */
-PyTeal.ORDER_OVERRIDES = [
+Tealx.ORDER_OVERRIDES = [
   // (foo()).bar -> foo().bar
   // (foo())[0] -> foo()[0]
-  [PyTeal.ORDER_FUNCTION_CALL, PyTeal.ORDER_MEMBER],
+  [Tealx.ORDER_FUNCTION_CALL, Tealx.ORDER_MEMBER],
   // (foo())() -> foo()()
-  [PyTeal.ORDER_FUNCTION_CALL, PyTeal.ORDER_FUNCTION_CALL],
+  [Tealx.ORDER_FUNCTION_CALL, Tealx.ORDER_FUNCTION_CALL],
   // (foo.bar).baz -> foo.bar.baz
   // (foo.bar)[0] -> foo.bar[0]
   // (foo[0]).bar -> foo[0].bar
   // (foo[0])[1] -> foo[0][1]
-  [PyTeal.ORDER_MEMBER, PyTeal.ORDER_MEMBER],
+  [Tealx.ORDER_MEMBER, Tealx.ORDER_MEMBER],
   // (foo.bar)() -> foo.bar()
   // (foo[0])() -> foo[0]()
-  [PyTeal.ORDER_MEMBER, PyTeal.ORDER_FUNCTION_CALL],
+  [Tealx.ORDER_MEMBER, Tealx.ORDER_FUNCTION_CALL],
 
   // not (not foo) -> not not foo
-  [PyTeal.ORDER_LOGICAL_NOT, PyTeal.ORDER_LOGICAL_NOT],
+  [Tealx.ORDER_LOGICAL_NOT, Tealx.ORDER_LOGICAL_NOT],
   // a and (b and c) -> a and b and c
-  [PyTeal.ORDER_LOGICAL_AND, PyTeal.ORDER_LOGICAL_AND],
+  [Tealx.ORDER_LOGICAL_AND, Tealx.ORDER_LOGICAL_AND],
   // a or (b or c) -> a or b or c
-  [PyTeal.ORDER_LOGICAL_OR, PyTeal.ORDER_LOGICAL_OR]
+  [Tealx.ORDER_LOGICAL_OR, Tealx.ORDER_LOGICAL_OR]
 ];
 
 /**
  * Whether the init method has been called.
  * @type {?boolean}
  */
-PyTeal.isInitialized = false;
+Tealx.isInitialized = false;
 
 /**
  * Initialise the database of variable names.
  * @param {!Workspace} workspace Workspace to generate code from.
  * @this {Generator}
  */
-PyTeal.init = function(workspace) {
+Tealx.init = function(workspace) {
   // Call Blockly.Generator's init.
   Object.getPrototypeOf(this).init.call(this);
 
@@ -184,10 +146,10 @@ PyTeal.init = function(workspace) {
  * @param {string} code Generated code.
  * @return {string} Completed code.
  */
-PyTeal.finish = function(code) {
-  // Import PyTeal
+Tealx.finish = function(code) {
+  // Import Tealx
   // Convert the definitions dictionary into a list.
-  const imports = ['from pyteal import *\n'];
+  const imports = ['<version value="8"></version>\n'];
   const definitions = [];
   for (let name in this.definitions_) {
     const def = this.definitions_[name];
@@ -212,7 +174,7 @@ PyTeal.finish = function(code) {
  * @param {string} line Line of generated code.
  * @return {string} Legal line of code.
  */
-PyTeal.scrubNakedValue = function(line) {
+Tealx.scrubNakedValue = function(line) {
   return line + '\n';
 };
 
@@ -222,7 +184,7 @@ PyTeal.scrubNakedValue = function(line) {
  * @return {string} Python string.
  * @protected
  */
-PyTeal.quote_ = function(string) {
+Tealx.quote_ = function(string) {
   // Can't use goog.string.quote since % must also be escaped.
   string = string.replace(/\\/g, '\\\\').replace(/\n/g, '\\\n');
 
@@ -248,7 +210,7 @@ PyTeal.quote_ = function(string) {
  * @return {string} Python code with comments and subsequent blocks added.
  * @protected
  */
-PyTeal.scrub_ = function(block, code, opt_thisOnly) {
+Tealx.scrub_ = function(block, code, opt_thisOnly) {
   let commentCode = '';
   // Only collect comments for blocks that aren't inline.
   if (!block.outputConnection || !block.outputConnection.targetConnection) {
@@ -286,7 +248,7 @@ PyTeal.scrub_ = function(block, code, opt_thisOnly) {
  * @param {boolean=} opt_negate Whether to negate the value.
  * @return {string|number}
  */
-PyTeal.getAdjustedInt = function(block, atId, opt_delta, opt_negate) {
+Tealx.getAdjustedInt = function(block, atId, opt_delta, opt_negate) {
   let delta = opt_delta || 0;
   if (block.workspace.options.oneBasedIndex) {
     delta--;
@@ -298,4 +260,4 @@ PyTeal.getAdjustedInt = function(block, atId, opt_delta, opt_negate) {
   return at;
 };
 
-exports.pytealGenerator = PyTeal;
+exports.tealxGenerator = Tealx;
