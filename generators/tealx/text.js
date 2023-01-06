@@ -18,7 +18,7 @@ const {tealxGenerator: Tealx} = goog.require('Blockly.Tealx');
 
 Tealx['text'] = function(block) {
   // Text value.
-  const code = '<bytes value="' + Tealx.quote_(block.getFieldValue('TEXT')) + '</bytes>';
+  const code = '<bytes value="' + (block.getFieldValue('TEXT')) + '" format="utf-8"></bytes>';
   return [code, Tealx.ORDER_ATOMIC];
 };
 
@@ -120,7 +120,7 @@ Tealx['text_getSubstring'] = function(block) {
 Tealx['text_print'] = function(block) {
   // Print statement.
   const msg = Tealx.valueToCode(block, 'TEXT', Tealx.ORDER_NONE) || 'Bytes("")';
-  return 'Log(' + msg + ')\n';
+  return '<log>' + msg + '</log>\n';
 };
 
 Tealx['text_prompt_ext'] = function(block) {

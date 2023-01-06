@@ -29,11 +29,11 @@ Tealx['math_number'] = function(block) {
 Tealx['math_arithmetic'] = function(block) {
   // Basic arithmetic operators, and power.
   const OPERATORS = {
-    'ADD': ['<add>', PyTeal.ORDER_ADDITIVE, '</add>'],
-    'MINUS': ['<minus>', PyTeal.ORDER_ADDITIVE, '</minus>'],
-    'MULTIPLY': ['<mul>', PyTeal.ORDER_MULTIPLICATIVE, '</mul>'],
-    'DIVIDE': ['<divide>', PyTeal.ORDER_MULTIPLICATIVE, '</divide>'],
-    'POWER': ['<exp>', PyTeal.ORDER_EXPONENTIATION, '</exp>'],
+    'ADD': ['<add>', Tealx.ORDER_ADDITIVE, '</add>'],
+    'MINUS': ['<minus>', Tealx.ORDER_ADDITIVE, '</minus>'],
+    'MULTIPLY': ['<mul>', Tealx.ORDER_MULTIPLICATIVE, '</mul>'],
+    'DIVIDE': ['<divide>', Tealx.ORDER_MULTIPLICATIVE, '</divide>'],
+    'POWER': ['<exp>', Tealx.ORDER_EXPONENTIATION, '</exp>'],
   };
   const tuple = OPERATORS[block.getFieldValue('OP')];
   const operator = tuple[0];

@@ -13,6 +13,11 @@ goog.module('Blockly.Tealx.logic');
 
 const {tealxGenerator: Tealx} = goog.require('Blockly.Tealx');
 
+// Constants
+// Since TEAL treats true values as int 1 and false values as int 0, alias them:
+const TRUE_VALUE = '<int value="1"></int>';
+const FALSE_VALUE = '<int value="0"></int>';
+
 
 Tealx['controls_if'] = function(block) {
   // If/elseif/else condition.
@@ -24,8 +29,8 @@ Tealx['controls_if'] = function(block) {
   }
   do {
     conditionCode =
-        Tealx.valueToCode(block, 'IF' + n, Tealx.ORDER_NONE) || '<int value="0"></int>';
-    branchCode = Tealx.statementToCode(block, 'DO' + n) || Tealx.INDENT + '<int value="0"></int>';
+        Tealx.valueToCode(block, 'IF' + n, Tealx.ORDER_NONE) || FALSE_VALUE;
+    branchCode = Tealx.statementToCode(block, 'DO' + n) || Tealx.INDENT + FALSE_VALUE;
     if (Tealx.STATEMENT_SUFFIX) {
       branchCode =
           Tealx.prefixLines(
@@ -40,7 +45,7 @@ Tealx['controls_if'] = function(block) {
   } while (block.getInput('IF' + n));
 
   if (block.getInput('ELSE') || Tealx.STATEMENT_SUFFIX) {
-    branchCode = Tealx.statementToCode(block, 'ELSE') || '<int value="0"></int>';
+    branchCode = Tealx.statementToCode(block, 'ELSE') || Tealx.INDENT + FALSE_VALUE;
     if (Tealx.STATEMENT_SUFFIX) {
       branchCode =
           Tealx.prefixLines(
@@ -54,17 +59,18 @@ Tealx['controls_if'] = function(block) {
 
 Tealx['controls_ifelse'] = Tealx['controls_if'];
 
-// Tealx['logic_compare'] = function(block) {
-//   // Comparison operator.
-//   const OPERATORS =
-//       {'EQ': 'Eq', 'NEQ': 'Neq', 'LT': 'Lt', 'LTE': 'Le', 'GT': 'Gt', 'GTE': 'Ge'};
-//   const operator = OPERATORS[block.getFieldValue('OP')];
-//   const order = Tealx.ORDER_RELATIONAL;
-//   const argument0 = Tealx.valueToCode(block, 'A', order) || 'Int(0)';
-//   const argument1 = Tealx.valueToCode(block, 'B', order) || 'Int(0)';
-//   const code = operator + '(' + argument0 + ', ' + argument1 + ')';
-//   return [code, order];
-// };
+Tealx['logic_compare'] = function(block) {
+  // Comparison operator.
+  const OPERATORS =
+      {'EQ': '<equals>', 'NEQ': '<not-equals>', 'LT': '<less-than>', 'LTE': '<less-or-equal-than>', 'GT': '<greater-than>', 'GTE': '<greater-or-equal-than>'};
+  const operator = OPERATORS[block.getFieldValue('OP')];
+  const closingOp = operator.slice(0, 1) + '/' + operator.slice(1);
+  const order = Tealx.ORDER_RELATIONAL;
+  const argument0 = Tealx.valueToCode(block, 'A', order) || FALSE_VALUE;
+  const argument1 = Tealx.valueToCode(block, 'B', order) || FALSE_VALUE;
+  const code = operator + ' ' + argument0 + argument1 + ' ' + closingOp;
+  return [code, order];
+};
 
 // Tealx['logic_operation'] = function(block) {
 //   // Operations 'and', 'or'.
@@ -99,8 +105,8 @@ Tealx['controls_ifelse'] = Tealx['controls_if'];
 //   return [code, Tealx.ORDER_LOGICAL_NOT];
 // };
 
-// Tealx['logic_boolean'] = function(block) {
-//   // Boolean values true and false.
-//   const code = (block.getFieldValue('BOOL') === 'TRUE') ? 'Int(1)' : 'Int(0)';
-//   return [code, Tealx.ORDER_ATOMIC];
-// };
+Tealx['logic_boolean'] = function(block) {
+  // Boolean values true and false.
+  const code = (block.getFieldValue('BOOL') === 'TRUE') ? TRUE_VALUE : FALSE_VALUE;
+  return [code, Tealx.ORDER_ATOMIC];
+};
