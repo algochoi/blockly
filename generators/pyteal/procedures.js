@@ -16,29 +16,8 @@ const {NameType} = goog.require('Blockly.Names');
 const {pytealGenerator: PyTeal} = goog.require('Blockly.PyTeal');
 
 
-PyTeal['procedures_defreturn'] = function(block) {
+PyTeal['procedures_defreturn'] = function(block){
   // Define a procedure with a return value.
-  // First, add a 'global' statement for every variable that is not shadowed by
-  // a local parameter.
-  const globals = [];
-  const workspace = block.workspace;
-  const usedVariables = Variables.allUsedVarModels(workspace) || [];
-  for (let i = 0, variable; (variable = usedVariables[i]); i++) {
-    const varName = variable.name;
-    if (block.getVars().indexOf(varName) === -1) {
-      globals.push(PyTeal.nameDB_.getName(varName, NameType.VARIABLE));
-    }
-  }
-  // Add developer variables.
-  const devVarList = Variables.allDeveloperVariables(workspace);
-  for (let i = 0; i < devVarList.length; i++) {
-    globals.push(
-        PyTeal.nameDB_.getName(devVarList[i], NameType.DEVELOPER_VARIABLE));
-  }
-
-  const globalString = globals.length ?
-      PyTeal.INDENT + 'global ' + globals.join(', ') + '\n' :
-      '';
   const funcName =
       PyTeal.nameDB_.getName(block.getFieldValue('NAME'), NameType.PROCEDURE);
   let xfix1 = '';
@@ -74,7 +53,8 @@ PyTeal['procedures_defreturn'] = function(block) {
   for (let i = 0; i < variables.length; i++) {
     args[i] = PyTeal.nameDB_.getName(variables[i], NameType.VARIABLE);
   }
-  let code = 'def ' + funcName + '(' + args.join(', ') + '):\n' + globalString +
+  let code = '@Subroutine(TealType.uint64)\n' + 
+      'def ' + funcName + '(' + args.join(', ') + '):\n' +
       xfix1 + loopTrap + branch + xfix2 + returnValue;
   code = PyTeal.scrub_(block, code);
   // Add % so as not to collide with helper functions in definitions list.
