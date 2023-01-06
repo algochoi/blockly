@@ -47,18 +47,18 @@ PyTeal['text_join'] = function(block) {
   // Should we allow joining by '-' or ',' or any other characters?
   switch (block.itemCount_) {
     case 0:
-      return ["''", PyTeal.ORDER_ATOMIC];
+      return ['Bytes("")', PyTeal.ORDER_ATOMIC];
     case 1: {
       const element =
-          PyTeal.valueToCode(block, 'ADD0', PyTeal.ORDER_NONE) || "''";
+          PyTeal.valueToCode(block, 'ADD0', PyTeal.ORDER_NONE) || 'Bytes("")';
       const codeAndOrder = forceString(element);
       return codeAndOrder;
     }
     default: {
       const element0 =
-          PyTeal.valueToCode(block, 'ADD0', PyTeal.ORDER_NONE) || "''";
+          PyTeal.valueToCode(block, 'ADD0', PyTeal.ORDER_NONE) || 'Bytes("")';
       const element1 =
-          PyTeal.valueToCode(block, 'ADD1', PyTeal.ORDER_NONE) || "''";
+          PyTeal.valueToCode(block, 'ADD1', PyTeal.ORDER_NONE) || 'Bytes("")';
       const code = 'Concat(' + forceString(element0)[0] + ', ' + forceString(element1)[0] + ')';
       return [code, PyTeal.ORDER_ADDITIVE];
     }
@@ -68,7 +68,7 @@ PyTeal['text_join'] = function(block) {
     //   const elements = [];
     //   for (let i = 0; i < block.itemCount_; i++) {
     //     elements[i] =
-    //         PyTeal.valueToCode(block, 'ADD' + i, PyTeal.ORDER_NONE) || "''";
+    //         PyTeal.valueToCode(block, 'ADD' + i, PyTeal.ORDER_NONE) || 'Bytes("")';
     //   }
     //   const tempVar = PyTeal.nameDB_.getDistinctName('x', NameType.VARIABLE);
     //   const code = '\'\'.join([str(' + tempVar + ') for ' + tempVar + ' in [' +
@@ -80,7 +80,7 @@ PyTeal['text_join'] = function(block) {
 
 PyTeal['text_length'] = function(block) {
   // Is the string null or array empty?
-  const text = PyTeal.valueToCode(block, 'VALUE', PyTeal.ORDER_NONE) || "''";
+  const text = PyTeal.valueToCode(block, 'VALUE', PyTeal.ORDER_NONE) || 'Bytes("")';
   return ['Len(' + text + ')', PyTeal.ORDER_FUNCTION_CALL];
 };
 
@@ -89,7 +89,7 @@ PyTeal['text_getSubstring'] = function(block) {
   const where1 = block.getFieldValue('WHERE1');
   const where2 = block.getFieldValue('WHERE2');
   const text =
-      PyTeal.valueToCode(block, 'STRING', PyTeal.ORDER_MEMBER) || "''";
+      PyTeal.valueToCode(block, 'STRING', PyTeal.ORDER_MEMBER) || 'Bytes("")';
   let at1;
   switch (where1) {
     case 'FROM_START':
@@ -119,7 +119,7 @@ PyTeal['text_getSubstring'] = function(block) {
 
 PyTeal['text_print'] = function(block) {
   // Print statement.
-  const msg = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_NONE) || "''";
+  const msg = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_NONE) || 'Bytes("")';
   return 'Log(' + msg + ')\n';
 };
 
@@ -138,7 +138,7 @@ def ${PyTeal.FUNCTION_NAME_PLACEHOLDER_}(msg):
     msg = PyTeal.quote_(block.getFieldValue('TEXT'));
   } else {
     // External message.
-    msg = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_NONE) || "''";
+    msg = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_NONE) || 'Bytes("")';
   }
   let code = functionName + '(' + msg + ')';
   const toNumber = block.getFieldValue('TYPE') === 'NUMBER';
@@ -146,6 +146,13 @@ def ${PyTeal.FUNCTION_NAME_PLACEHOLDER_}(msg):
     code = 'float(' + code + ')';
   }
   return [code, PyTeal.ORDER_FUNCTION_CALL];
+};
+
+PyTeal['text_isEmpty'] = function(block) {
+  // Is the string null or array empty?
+  const text = PyTeal.valueToCode(block, 'VALUE', PyTeal.ORDER_NONE) || 'Bytes("")';
+  const code = 'Btoi(' + text + ')';
+  return [code, PyTeal.ORDER_LOGICAL_NOT];
 };
 
 PyTeal['text_prompt'] = PyTeal['text_prompt_ext'];

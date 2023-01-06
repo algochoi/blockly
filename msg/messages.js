@@ -797,7 +797,7 @@ Blockly.Msg.TEXT_ISEMPTY_HELPURL = 'https://github.com/google/blockly/wiki/Text#
 /** @type {string} */
 /// block text - See [https://github.com/google/blockly/wiki/Text#checking-for-empty-text https://github.com/google/blockly/wiki/Text#checking-for-empty-text].
 /// \n\nParameters:\n* %1 - the piece of text to test for emptiness
-Blockly.Msg.TEXT_ISEMPTY_TITLE = '%1 is empty';
+Blockly.Msg.TEXT_ISEMPTY_TITLE = 'Btoi %1';
 /** @type {string} */
 /// tooltip - See [https://github.com/google/blockly/wiki/Text#checking-for-empty-text https://github.com/google/blockly/wiki/Text#checking-for-empty-text].
 Blockly.Msg.TEXT_ISEMPTY_TOOLTIP = 'Returns true if the provided text is empty.';

@@ -18,7 +18,7 @@ const {pytealGenerator: PyTeal} = goog.require('Blockly.PyTeal');
 PyTeal['variables_get'] = function(block) {
   // Variable getter.
   const code =
-      PyTeal.nameDB_.getName(block.getFieldValue('VAR'), NameType.VARIABLE);
+      PyTeal.nameDB_.getName(block.getFieldValue('VAR'), NameType.VARIABLE) + '.load()';
   return [code, PyTeal.ORDER_ATOMIC];
 };
 
@@ -28,5 +28,5 @@ PyTeal['variables_set'] = function(block) {
       PyTeal.valueToCode(block, 'VALUE', PyTeal.ORDER_NONE) || '0';
   const varName =
       PyTeal.nameDB_.getName(block.getFieldValue('VAR'), NameType.VARIABLE);
-  return varName + ' = ' + argument0 + '\n';
+  return varName + '.store(' + argument0 + ')\n';
 };

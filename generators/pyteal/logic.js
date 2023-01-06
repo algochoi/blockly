@@ -25,26 +25,26 @@ PyTeal['controls_if'] = function(block) {
   do {
     conditionCode =
         PyTeal.valueToCode(block, 'IF' + n, PyTeal.ORDER_NONE) || 'Int(0)';
-    branchCode = PyTeal.statementToCode(block, 'DO' + n) || 'Reject()';
+    branchCode = PyTeal.pytealStatementToCode(block, 'DO' + n) || PyTeal.INDENT + 'Reject()';
     if (PyTeal.STATEMENT_SUFFIX) {
       branchCode =
           PyTeal.prefixLines(
               PyTeal.injectId(PyTeal.STATEMENT_SUFFIX, block)) +
           branchCode;
     }
-    code += (n === 0 ? 'If(' : 'ElseIf(') + conditionCode + ')\n.Then(' + branchCode + ')\n';
+    code += (n === 0 ? 'If(' : 'ElseIf(') + conditionCode + ').Then(\n' + branchCode + '\n)\n';
     n++;
   } while (block.getInput('IF' + n));
 
   if (block.getInput('ELSE') || PyTeal.STATEMENT_SUFFIX) {
-    branchCode = PyTeal.statementToCode(block, 'ELSE') || 'Reject()';
+    branchCode = PyTeal.pytealStatementToCode(block, 'ELSE') || 'Reject()';
     if (PyTeal.STATEMENT_SUFFIX) {
       branchCode =
           PyTeal.prefixLines(
               PyTeal.injectId(PyTeal.STATEMENT_SUFFIX, block)) +
           branchCode;
     }
-    code += '.Else(' + branchCode + ')\n';
+    code += '.Else(\n' + branchCode + ')\n';
   }
   return code;
 };
@@ -100,21 +100,4 @@ PyTeal['logic_boolean'] = function(block) {
   // Boolean values true and false.
   const code = (block.getFieldValue('BOOL') === 'TRUE') ? 'Int(1)' : 'Int(0)';
   return [code, PyTeal.ORDER_ATOMIC];
-};
-
-PyTeal['logic_null'] = function(block) {
-  // Null data type.
-  return ['None', PyTeal.ORDER_ATOMIC];
-};
-
-PyTeal['logic_ternary'] = function(block) {
-  // Ternary operator.
-  const value_if =
-      PyTeal.valueToCode(block, 'IF', PyTeal.ORDER_CONDITIONAL) || 'False';
-  const value_then =
-      PyTeal.valueToCode(block, 'THEN', PyTeal.ORDER_CONDITIONAL) || 'None';
-  const value_else =
-      PyTeal.valueToCode(block, 'ELSE', PyTeal.ORDER_CONDITIONAL) || 'None';
-  const code = value_then + ' if ' + value_if + ' else ' + value_else;
-  return [code, PyTeal.ORDER_CONDITIONAL];
 };

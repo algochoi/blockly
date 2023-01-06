@@ -164,7 +164,7 @@ PyTeal.init = function(workspace) {
   for (let i = 0; i < devVarList.length; i++) {
     defvars.push(
         this.nameDB_.getName(devVarList[i], Names.DEVELOPER_VARIABLE_TYPE) +
-        ' = None');
+        ' = ScratchVar(TealType.uint64)');
   }
 
   // Add user variables, but only ones that are being used.
@@ -172,7 +172,7 @@ PyTeal.init = function(workspace) {
   for (let i = 0; i < variables.length; i++) {
     defvars.push(
         this.nameDB_.getName(variables[i].getId(), NameType.VARIABLE) +
-        ' = None');
+        ' = ScratchVar(TealType.uint64)');
   }
 
   this.definitions_['variables'] = defvars.join('\n');

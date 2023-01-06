@@ -170,6 +170,20 @@ export class Generator {
   }
 
   /**
+   * Prepend a comma to end of PyTeal Statement.
+   *
+   * @param text The lines of code.
+   * @param prefix The common prefix.
+   * @returns The prefixed lines of code.
+   */
+  prefixPytealStatement(text: string, prefix: string): string {
+    if (text) {
+      return prefix + text.replace(/(?!\n$)\n/g, ',\n' + prefix);
+    }
+    return '';
+  }
+
+  /**
    * Recursively spider a tree of blocks, returning all their comments.
    *
    * @param block The block from which to start spidering.
@@ -346,6 +360,32 @@ export class Generator {
     }
     if (code) {
       code = this.prefixLines((code), this.INDENT);
+    }
+    return code;
+  }
+
+  /**
+   * Generate a code string representing the blocks attached to the named
+   * statement input. Indent the code.
+   * This is mainly used in generators. When trying to generate code to evaluate
+   * look at using workspaceToCode or blockToCode.
+   *
+   * @param block The block containing the input.
+   * @param name The name of the input.
+   * @returns Generated code or '' if no blocks are connected.
+   */
+  pytealStatementToCode(block: Block, name: string): string {
+    const targetBlock = block.getInputTargetBlock(name);
+    let code = this.blockToCode(targetBlock);
+    // Value blocks must return code and order of operations info.
+    // Statement blocks must only return code.
+    if (typeof code !== 'string') {
+      throw TypeError(
+          'Expecting code from statement block: ' +
+          (targetBlock && targetBlock.type));
+    }
+    if (code) {
+      code = this.prefixPytealStatement((code), this.INDENT);
     }
     return code;
   }

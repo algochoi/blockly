@@ -435,8 +435,8 @@ start();
         </value>
       </block>
       <block type="controls_repeat" disabled="true"></block>
-      <block type="controls_whileUntil"></block>
-      <block type="controls_for">
+      <block type="controls_whileUntil" disabled="true"></block>
+      <!-- <block type="controls_for">
         <value name="FROM">
           <shadow type="math_number">
             <field name="NUM">1</field>
@@ -453,7 +453,7 @@ start();
           </shadow>
         </value>
       </block>
-      <block type="controls_forEach"></block>
+      <block type="controls_forEach"></block> -->
       <block type="controls_flow_statements"></block>
     </category>
     <category name="Math" categorystyle="math_category">
@@ -487,13 +487,7 @@ start();
     </category>
     <category name="Text" categorystyle="text_category">
       <block type="text"></block>
-      <!-- <block type="text_multiline"></block> -->
       <block type="text_join"></block>
-      <!-- <block type="text_append">
-        <value name="TEXT">
-          <shadow type="text"></shadow>
-        </value>
-      </block> -->
       <block type="text_length">
         <value name="VALUE">
           <shadow type="text">
@@ -506,6 +500,13 @@ start();
           <block type="variables_get">
             <field name="VAR">text</field>
           </block>
+        </value>
+      </block>
+      <block type="text_isEmpty">
+        <value name="VALUE">
+          <shadow type="text">
+            <field name="TEXT"></field>
+          </shadow>
         </value>
       </block>
       <label text="Input/Output:" web-class="ioLabel"></label>
@@ -524,7 +525,7 @@ start();
         </value>
       </block> -->
     </category>
-    <category name="Lists" categorystyle="list_category">
+    <!-- <category name="Lists" categorystyle="list_category">
       <block type="lists_create_with">
         <mutation items="0"></mutation>
       </block>
@@ -575,10 +576,11 @@ start();
       </block>
       <block type="lists_sort"></block>
       <block type="lists_reverse"></block>
-    </category>
+    </category> -->
     <sep></sep>
     <category name="Variables" categorystyle="variable_category" custom="VARIABLE"></category>
     <category name="Functions" categorystyle="procedure_category" custom="PROCEDURE"></category>
+    <sep></sep>
   </xml>
 </body>
 </html>
