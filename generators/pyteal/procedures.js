@@ -64,7 +64,27 @@ PyTeal['procedures_defreturn'] = function(block){
 
 // Defining a procedure without a return value uses the same generator as
 // a procedure with a return value.
-PyTeal['procedures_defnoreturn'] = PyTeal['procedures_defreturn'];
+PyTeal['procedures_defnoreturn'] = function(block) {
+  const funcName =
+      PyTeal.nameDB_.getName(block.getFieldValue('NAME'), NameType.PROCEDURE);
+
+  const args = [];
+  const variables = block.getVars();
+  for (let i = 0; i < variables.length; i++) {
+    args[i] = PyTeal.nameDB_.getName(variables[i], NameType.VARIABLE);
+  }
+
+  const funcSig = funcName + '(' + args.join(', ') + ')';
+  let code = 'def ' + funcSig + ':\n';
+  
+  // Return Seq
+  code += PyTeal.INDENT + 'return Seq(Int(0))\n'
+  code += 'print(compileTeal(' + funcSig + ', mode=Mode.Application, version=6))'
+
+  code = PyTeal.scrub_(block, code);
+  PyTeal.definitions_['%' + funcName] = code;
+  return null;
+}
 
 PyTeal['procedures_callreturn'] = function(block) {
   // Call a procedure with a return value.

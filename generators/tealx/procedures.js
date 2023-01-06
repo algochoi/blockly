@@ -88,13 +88,6 @@ Tealx['procedures_callreturn'] = function(block) {
   // Format output code
   let code = '<subroutine-call name="' + funcName + '">\n';
   code += Tealx.INDENT + args.join('')
-//   if (args.length > 0) {
-//     let argCode = '';
-//     for (const arg of args) {
-//         argCode += '<argument name="' + arg + '" type="uint64"></argument>\n';
-//     }
-//     code += '<arguments>' + argCode + '</arguments>\n';
-//   }
   code += '\n</subroutine-call>\n'
   return [code, Tealx.ORDER_FUNCTION_CALL];
 };
