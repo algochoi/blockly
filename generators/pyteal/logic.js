@@ -32,7 +32,7 @@ PyTeal['controls_if'] = function(block) {
               PyTeal.injectId(PyTeal.STATEMENT_SUFFIX, block)) +
           branchCode;
     }
-    code += (n === 0 ? 'If(' : 'ElseIf(') + conditionCode + ').Then(\n' + branchCode + '\n)\n';
+    code += (n === 0 ? 'If(' : 'ElseIf(') + conditionCode + ').Then(' + branchCode + ')';
     n++;
   } while (block.getInput('IF' + n));
 
@@ -44,8 +44,9 @@ PyTeal['controls_if'] = function(block) {
               PyTeal.injectId(PyTeal.STATEMENT_SUFFIX, block)) +
           branchCode;
     }
-    code += '.Else(\n' + branchCode + '\n)\n';
+    code += '.Else(' + branchCode + ')';
   }
+  code += '\n';
   return code;
 };
 

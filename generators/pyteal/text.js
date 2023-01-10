@@ -79,7 +79,6 @@ PyTeal['text_join'] = function(block) {
 };
 
 PyTeal['text_length'] = function(block) {
-  // Is the string null or array empty?
   const text = PyTeal.valueToCode(block, 'VALUE', PyTeal.ORDER_NONE) || 'Bytes("")';
   return ['Len(' + text + ')', PyTeal.ORDER_FUNCTION_CALL];
 };
@@ -117,35 +116,19 @@ PyTeal['text_getSubstring'] = function(block) {
   return [code, PyTeal.ORDER_MEMBER];
 };
 
+// No-op statement
+// If the message is either "APPROVE" or "REJECT", then it is interpreted as
+// an Approve() and Reject() statement in PyTeal, respectively. 
+// Otherwise, it will be interpreted as a Log(Bytes(msg)).
 PyTeal['text_print'] = function(block) {
   // Print statement.
   const msg = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_NONE) || 'Bytes("")';
+  if (msg.includes('APPROVE')) {
+    return 'Approve()\n';
+  } else if (msg.includes('REJECT')) {
+    return 'Reject()\n';
+  }
   return 'Log(' + msg + ')\n';
-};
-
-PyTeal['text_prompt_ext'] = function(block) {
-  // Prompt function.
-  const functionName = PyTeal.provideFunction_('text_prompt', `
-def ${PyTeal.FUNCTION_NAME_PLACEHOLDER_}(msg):
-  try:
-    return raw_input(msg)
-  except NameError:
-    return input(msg)
-`);
-  let msg;
-  if (block.getField('TEXT')) {
-    // Internal message.
-    msg = PyTeal.quote_(block.getFieldValue('TEXT'));
-  } else {
-    // External message.
-    msg = PyTeal.valueToCode(block, 'TEXT', PyTeal.ORDER_NONE) || 'Bytes("")';
-  }
-  let code = functionName + '(' + msg + ')';
-  const toNumber = block.getFieldValue('TYPE') === 'NUMBER';
-  if (toNumber) {
-    code = 'float(' + code + ')';
-  }
-  return [code, PyTeal.ORDER_FUNCTION_CALL];
 };
 
 // Override to Btoi opcode

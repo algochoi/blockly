@@ -15,7 +15,9 @@ const Variables = goog.require('Blockly.Variables');
 const {NameType} = goog.require('Blockly.Names');
 const {pytealGenerator: PyTeal} = goog.require('Blockly.PyTeal');
 
-
+// Defines a subroutine in PyTeal with a Int return.
+// Since blockly is mostly supported for dynamically typed languages,
+// we may need a separate blocks to define operations on separate types.
 PyTeal['procedures_defreturn'] = function(block){
   // Define a procedure with a return value.
   const funcName =
@@ -62,11 +64,11 @@ PyTeal['procedures_defreturn'] = function(block){
   return null;
 };
 
-// Defining a procedure without a return value uses the same generator as
-// a procedure with a return value.
+// This is an alias for defining a Seq() in PyTeal.
 PyTeal['procedures_defnoreturn'] = function(block) {
   const funcName =
       PyTeal.nameDB_.getName(block.getFieldValue('NAME'), NameType.PROCEDURE);
+  let branch = PyTeal.pytealStatementToCode(block, 'STACK');
 
   const args = [];
   const variables = block.getVars();
@@ -74,12 +76,12 @@ PyTeal['procedures_defnoreturn'] = function(block) {
     args[i] = PyTeal.nameDB_.getName(variables[i], NameType.VARIABLE);
   }
 
-  const funcSig = funcName + '(' + args.join(', ') + ')';
-  let code = 'def ' + funcSig + ':\n';
-  
   // Return Seq
-  code += PyTeal.INDENT + 'return Seq(Int(0))\n'
-  code += 'print(compileTeal(' + funcSig + ', mode=Mode.Application, version=6))'
+  if (!branch.trim()) {
+    branch = PyTeal.INDENT + 'Int(0)';
+  }
+  let code = funcName + ' = Seq(\n' + branch + '\n)\n';
+  code += 'print(compileTeal(' + funcName + ', mode=Mode.Application, version=8))'
 
   code = PyTeal.scrub_(block, code);
   PyTeal.definitions_['%' + funcName] = code;
@@ -105,25 +107,4 @@ PyTeal['procedures_callnoreturn'] = function(block) {
   // function call as a value, with the addition of line ending.
   const tuple = PyTeal['procedures_callreturn'](block);
   return tuple[0] + '\n';
-};
-
-PyTeal['procedures_ifreturn'] = function(block) {
-  // Conditionally return value from a procedure.
-  const condition =
-      PyTeal.valueToCode(block, 'CONDITION', PyTeal.ORDER_NONE) || 'False';
-  let code = 'if ' + condition + ':\n';
-  if (PyTeal.STATEMENT_SUFFIX) {
-    // Inject any statement suffix here since the regular one at the end
-    // will not get executed if the return is triggered.
-    code += PyTeal.prefixLines(
-        PyTeal.injectId(PyTeal.STATEMENT_SUFFIX, block), PyTeal.INDENT);
-  }
-  if (block.hasReturnValue_) {
-    const value =
-        PyTeal.valueToCode(block, 'VALUE', PyTeal.ORDER_NONE) || 'None';
-    code += PyTeal.INDENT + 'return ' + value + '\n';
-  } else {
-    code += PyTeal.INDENT + 'return\n';
-  }
-  return code;
 };
