@@ -15,11 +15,27 @@ const Variables = goog.require('Blockly.Variables');
 const {NameType} = goog.require('Blockly.Names');
 const {tealxGenerator: Tealx} = goog.require('Blockly.Tealx');
 
-
+// Defines a subroutine with a Int return. 
+// Currently, Bytes returns are not supported.
 Tealx['procedures_defreturn'] = function(block){
   // Define a procedure with a return value.
   const funcName =
       Tealx.nameDB_.getName(block.getFieldValue('NAME'), NameType.PROCEDURE);
+
+  let generateSubroutineReturn = (value) => {
+    return '<subroutine-return> ' + returnValue + ' </subroutine-return>';
+  };
+  let generateSubroutineDefinition = (prefix, body, suffix) => {
+    return '<subroutine name="' + funcName + '">\n' + prefix + body + suffix + '\n</subroutine>';
+  };
+  if (funcName == "main") {
+    generateSubroutineReturn = (value) => {
+      return '<program-return> ' + returnValue + ' </program-return>'
+    }
+    generateSubroutineDefinition = (prefix, body, suffix) => {
+      return '<main>\n' + body + '\n</main>';
+    };
+  }
   let xfix1 = '';
   if (Tealx.STATEMENT_PREFIX) {
     xfix1 += Tealx.injectId(Tealx.STATEMENT_PREFIX, block);
@@ -39,14 +55,15 @@ Tealx['procedures_defreturn'] = function(block){
   let returnValue =
       Tealx.valueToCode(block, 'RETURN', Tealx.ORDER_NONE) || '';
   let xfix2 = '';
+  let returnType = '<returns type="uint64" />\n'
   if (branch && returnValue) {
     // After executing the function body, revisit this block for the return.
     xfix2 = xfix1;
   }
   if (returnValue) {
-    returnValue = Tealx.INDENT + '<return> ' + returnValue + '</return>';
+    returnValue = generateSubroutineReturn(returnValue);
   } else if (!branch) {
-    branch = '<return>' + Tealx.FALSE_VALUE + '</return>';
+    returnValue = generateSubroutineReturn(Tealx.FALSE_VALUE);
   }
   const args = [];
   const variables = block.getVars();
@@ -55,16 +72,17 @@ Tealx['procedures_defreturn'] = function(block){
   }
 
   // Build subroutine signature
-  let code = '<subroutine name="' + funcName + '">\n';
+  let argCode = '';
   if (args.length > 0) {
-    let argCode = '';
     for (const arg of args) {
-        argCode += '<argument name="' + arg + '" type="uint64"></argument>';
+        argCode += '<argument name="' + arg + '" type="uint64" />';
     }
-    code += Tealx.INDENT + '<arguments>' + argCode + '</arguments>\n';
+    // argCode = Tealx.INDENT + '<arguments>' + argCode + '</arguments>\n';
   }
-
-  code += xfix1 + loopTrap + branch + xfix2 + returnValue + '\n</subroutine>';
+  // Define subroutine body
+  let prefixBody = argCode + returnType + '<body>\n';
+  let suffixBody = '</body>';
+  let code = generateSubroutineDefinition(prefixBody, xfix1 + loopTrap + branch + xfix2 + returnValue, suffixBody);
   code = Tealx.scrub_(block, code);
   // Add % so as not to collide with helper functions in definitions list.
   Tealx.definitions_['%' + funcName] = code;

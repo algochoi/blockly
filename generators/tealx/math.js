@@ -20,7 +20,7 @@ Tealx.addReservedWords('math,random,Number');
 
 Tealx['math_number'] = function(block) {
   // Numeric value.
-  let code = '<int value="' + Number(block.getFieldValue('NUM')) + '"></int>';
+  let code = '<int value="' + Number(block.getFieldValue('NUM')) + '" />';
   const order = code < 0 ? Tealx.ORDER_UNARY_SIGN : Tealx.ORDER_ATOMIC;
   
   return [code, order];
@@ -122,12 +122,12 @@ Tealx['math_arithmetic'] = function(block) {
 //   return [code, Tealx.ORDER_MULTIPLICATIVE];
 // };
 
-// Tealx['math_modulo'] = function(block) {
-//   // Remainder computation.
-//   const argument0 =
-//       Tealx.valueToCode(block, 'DIVIDEND', Tealx.ORDER_MULTIPLICATIVE) || '0';
-//   const argument1 =
-//       Tealx.valueToCode(block, 'DIVISOR', Tealx.ORDER_MULTIPLICATIVE) || '0';
-//   const code = 'Mod(' + argument0 + ', ' + argument1 + ')';
-//   return [code, Tealx.ORDER_MULTIPLICATIVE];
-// };
+Tealx['math_modulo'] = function(block) {
+  // Remainder computation.
+  const argument0 =
+      Tealx.valueToCode(block, 'DIVIDEND', Tealx.ORDER_MULTIPLICATIVE) || '0';
+  const argument1 =
+      Tealx.valueToCode(block, 'DIVISOR', Tealx.ORDER_MULTIPLICATIVE) || '0';
+  const code = '<mod>' + argument0 + argument1 + '</mod>';
+  return [code, Tealx.ORDER_MULTIPLICATIVE];
+};

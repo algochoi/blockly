@@ -18,7 +18,7 @@ const {tealxGenerator: Tealx} = goog.require('Blockly.Tealx');
 Tealx['variables_get'] = function(block) {
   // Variable getter.
   const code =
-      '<variable-get name="' + Tealx.nameDB_.getName(block.getFieldValue('VAR'), NameType.VARIABLE) + '"></variable-get>\n';
+      '<variable-get name="' + Tealx.nameDB_.getName(block.getFieldValue('VAR'), NameType.VARIABLE) + '" />\n';
   return [code, Tealx.ORDER_ATOMIC];
 };
 

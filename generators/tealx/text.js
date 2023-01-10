@@ -18,7 +18,7 @@ const {tealxGenerator: Tealx} = goog.require('Blockly.Tealx');
 
 Tealx['text'] = function(block) {
   // Text value.
-  const code = '<bytes value="' + (block.getFieldValue('TEXT')) + '" format="utf-8"></bytes>';
+  const code = '<bytes value="' + (block.getFieldValue('TEXT')) + '" format="utf-8" />';
   return [code, Tealx.ORDER_ATOMIC];
 };
 

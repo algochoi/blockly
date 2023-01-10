@@ -158,7 +158,7 @@ Tealx.init = function(workspace) {
 Tealx.finish = function(code) {
   // Import Tealx
   // Convert the definitions dictionary into a list.
-  const imports = ['<program version="8"></program>\n'];
+  const imports = ['<program version="8">\n'];
   const definitions = [];
   for (let name in this.definitions_) {
     const def = this.definitions_[name];
@@ -170,6 +170,7 @@ Tealx.finish = function(code) {
   }
   // Call Blockly.Generator's finish.
   code = Object.getPrototypeOf(this).finish.call(this, code);
+  code += '</program>';
   this.isInitialized = false;
 
   this.nameDB_.reset();
@@ -227,7 +228,7 @@ Tealx.scrub_ = function(block, code, opt_thisOnly) {
     let comment = block.getCommentText();
     if (comment) {
       comment = stringUtils.wrap(comment, this.COMMENT_WRAP - 3);
-      commentCode += this.prefixLines(comment + '\n', '# ');
+      commentCode += this.prefixLines(comment + ' -->\n', '<!-- ');
     }
     // Collect comments for all value arguments.
     // Don't collect comments for nested statements.
@@ -237,7 +238,7 @@ Tealx.scrub_ = function(block, code, opt_thisOnly) {
         if (childBlock) {
           comment = this.allNestedComments(childBlock);
           if (comment) {
-            commentCode += this.prefixLines(comment, '# ');
+            commentCode += this.prefixLines(comment + ' -->', '<!-- ');
           }
         }
       }
